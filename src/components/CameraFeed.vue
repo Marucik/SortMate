@@ -130,7 +130,7 @@ export default {
   height: 90px;
   border: 5px black solid;
   border-radius: 50%;
-  opacity: 80%;
+  opacity: 0.8;
   transition: transform 0.1s ease-out;
 }
 
@@ -152,6 +152,6 @@ export default {
   height: 50px;
   border: 5px black solid;
   border-radius: 50%;
-  opacity: 80%;
+  opacity: 0.8;
 }
 </style>
