@@ -10,11 +10,8 @@
 </template>
 
 <script>
-import {
-  BrowserBarcodeReader,
-  BarcodeFormat,
-  DecodeHintType
-} from "@zxing/library";
+import { BrowserMultiFormatOneDReader } from "@zxing/browser";
+import { BarcodeFormat, DecodeHintType } from "@zxing/library";
 
 export default {
   name: "CameraFeed",
@@ -33,16 +30,22 @@ export default {
       hints.set(DecodeHintType.POSSIBLE_FORMATS, formats);
       hints.set(DecodeHintType.TRY_HARDER, true);
 
-      for (let index = 0; index < 10; index++) {
+      for (let index = 0; index < 1; index++) {
         // let found = false;
 
-        const codeReader = new BrowserBarcodeReader(hints);
-        const imgSrc = this.createImageFromVideo();
+        // const codeReader = new MultiFormatReader();
+        // codeReader.setHints(hints);
+
+        const codeReader = new BrowserMultiFormatOneDReader();
+
+        const imgSrc = await this.createImageFromVideo();
+
+        // console.log(imgSrc);
 
         try {
-          var result = await codeReader.decodeFromImage(undefined, imgSrc);
+          var result = await codeReader.decodeFromImageUrl(imgSrc);
         } catch (err) {
-          console.error("Not found :(");
+          console.error(err);
         }
 
         if (result) break;
@@ -52,7 +55,7 @@ export default {
 
       this.$emit("scan", result);
     },
-    createImageFromVideo() {
+    async createImageFromVideo() {
       let canvas = document.createElement("canvas");
       canvas.width = this.videoWidth;
       canvas.height = this.videoHeight;
@@ -61,8 +64,7 @@ export default {
         .getContext("2d")
         .drawImage(this.$refs.video, 0, 0, canvas.width, canvas.height);
 
-      let dataURL = canvas.toDataURL();
-      return dataURL;
+      return canvas.toDataURL();
     },
     toggleTorch() {
       const track = this.mainStream.getVideoTracks()[0];

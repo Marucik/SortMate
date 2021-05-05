@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --https",
+    "start": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@zxing/library": "^0.17.1",
+    "@zxing/browser": "0.0.9",
+    "@zxing/library": "^0.18.5",
     "core-js": "^3.6.5",
     "i": "^0.3.6",
     "normalize.css": "^8.0.1",
