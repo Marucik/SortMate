@@ -1,36 +1,68 @@
 <template>
   <div class="home">
+    <ProgressBar :progress="scanProgress" />
     <ScannedNotification
-      v-if="notification != null"
-      :code="notification"
-      @close="hideNotification"
+      v-if="displayNotification && code !== undefined"
+      :code="code"
+      :isPresent="isPresent"
+      :scannedData="scannedData"
+      @closeNotification="hideNotification"
+      @openRequest="displayForm"
     />
-    <CameraFeed @scan="propToNotify" />
+    <RequestForm
+      v-if="displayRequestModal"
+      :code="code"
+      @closeRequest="hideRequest"
+    />
+    <CameraFeed @scan="propToNotify" @progress="updateProgress" />
   </div>
 </template>
 
 <script>
 import CameraFeed from "../components/CameraFeed.vue";
 import ScannedNotification from "../components/ScannedNotification.vue";
+import RequestForm from "../components/RequestForm.vue";
+import ProgressBar from "../components/ProgressBar.vue";
+// import axios from "axios";
 
 export default {
   name: "Home",
-  components: { CameraFeed, ScannedNotification },
+  components: { CameraFeed, ScannedNotification, RequestForm, ProgressBar },
   data() {
     return {
-      notification: null
+      code: null,
+      isPresent: false,
+      displayNotification: false,
+      displayRequestModal: false,
+      scanProgress: 0,
+      scannedData: null
     };
   },
   methods: {
-    propToNotify(value) {
-      if (value === undefined) {
-        this.notification = "Not found";
-      } else {
-        this.notification = value;
+    async propToNotify(value) {
+      if (value.code === undefined) {
+        this.$toast.error("Code not found in front of camera. Try again :)");
       }
+
+      this.code = value.code;
+      this.isPresent = value.isPresent;
+      this.displayNotification = true;
+      this.scanProgress = 0;
+      this.scannedData = value.data;
     },
     hideNotification() {
-      this.notification = null;
+      this.displayNotification = false;
+      this.isPresent = false;
+    },
+    displayForm() {
+      this.hideNotification();
+      this.displayRequestModal = true;
+    },
+    hideRequest() {
+      this.displayRequestModal = false;
+    },
+    updateProgress(value) {
+      this.scanProgress = value;
     }
   }
 };

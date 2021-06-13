@@ -3,18 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --https",
+    "start": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@zxing/library": "^0.17.1",
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "i": "^0.3.6",
     "normalize.css": "^8.0.1",
     "npm": "^6.14.7",
     "vue": "^2.6.11",
-    "vue-router": "^3.2.0"
+    "vue-router": "^3.2.0",
+    "vue-toast-notification": "^0.6.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.4.0",
