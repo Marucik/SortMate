@@ -20,7 +20,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-  min-height: 100%;
+  min-height: 100vh;
   width: 100vw;
   overflow-x: hidden;
 }
@@ -32,7 +32,7 @@ body {
  This pattern is downloaded from www.subtlepatterns.com 
  If you need more, that's where to get'em.
  ======================================================== */
-  height: 100%;
+  min-height: 100vh;
   width: 100%;
 }
 </style>

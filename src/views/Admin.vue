@@ -7,6 +7,7 @@
     <div class="admin-main">
       <ProductRequest
         v-for="request in requests"
+        @requestAccepted="filterRequests"
         :key="request.id"
         :request="request"
       />
@@ -35,6 +36,12 @@ export default {
     logoutUser() {
       localStorage.authenticated = false;
       this.$router.push("/login");
+    },
+    filterRequests(id) {
+      setTimeout(() => {
+        this.requests = this.requests.filter(element => element.id !== id);
+      }, 300);
+      this.$toast.success("Request accepted!");
     }
   }
 };

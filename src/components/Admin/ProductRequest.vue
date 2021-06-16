@@ -1,5 +1,5 @@
 <template>
-  <div class="request-wrapper">
+  <div class="request-wrapper" :class="{ fadeOut: accepted }">
     <div class="data-wrapper">
       <p class="data-label">Code:</p>
       <p>{{ request.code }}</p>
@@ -22,9 +22,20 @@ import axios from "axios";
 export default {
   name: "ProductRequest",
   props: ["request"],
+  data() {
+    return {
+      accepted: false
+    };
+  },
   methods: {
     async acceptRequest() {
-      await axios.post();
+      try {
+        await axios.post(`/api/product-requests/${this.request.id}:accept`);
+        this.accepted = true;
+        this.$emit("requestAccepted", this.request.id);
+      } catch {
+        this.$toast.error("Failed to accept request.");
+      }
     }
   }
 };
@@ -41,5 +52,18 @@ export default {
 
 .data-label {
   margin: 0;
+}
+
+.fadeOut {
+  animation: fadeOut 0.3s ease-out;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 </style>
