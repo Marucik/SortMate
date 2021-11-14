@@ -15,6 +15,7 @@ import {
   BarcodeFormat,
   DecodeHintType
 } from "@zxing/library";
+import axios from "axios";
 
 export default {
   name: "CameraFeed",
@@ -33,24 +34,50 @@ export default {
       hints.set(DecodeHintType.POSSIBLE_FORMATS, formats);
       hints.set(DecodeHintType.TRY_HARDER, true);
 
+      console.groupCollapsed("Errors.");
       for (let index = 0; index < 10; index++) {
-        // let found = false;
-
         const codeReader = new BrowserBarcodeReader(hints);
         const imgSrc = this.createImageFromVideo();
 
         try {
-          var result = await codeReader.decodeFromImage(undefined, imgSrc);
+          var scanResult = await codeReader.decodeFromImage(undefined, imgSrc);
         } catch (err) {
-          console.error("Not found :(");
+          console.log("Not found");
+          this.$emit("progress", index + 1);
         }
 
-        if (result) break;
+        if (scanResult) {
+          break;
+        }
       }
+      console.groupEnd();
+      if (scanResult) {
+        try {
+          const result = await axios.get(`/api/products/${scanResult.text}`);
 
-      console.log(result);
+          console.log(result, scanResult.text);
 
-      this.$emit("scan", result);
+          this.$emit("scan", {
+            isPresent: true,
+            code: scanResult.text,
+            data: result.data
+          });
+          return;
+        } catch (error) {
+          this.$emit("scan", {
+            isPresent: false,
+            code: scanResult.text,
+            data: null
+          });
+          return;
+        }
+      } else {
+        this.$emit("scan", {
+          isPresent: false,
+          code: undefined,
+          data: null
+        });
+      }
     },
     createImageFromVideo() {
       let canvas = document.createElement("canvas");

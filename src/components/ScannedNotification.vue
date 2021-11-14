@@ -1,8 +1,18 @@
 <template>
   <div class="notification-container">
-    <div class="notification">
-      <p>Code: {{ code }}</p>
-      <button class="close-btn" @click="emmitClose">X</button>
+    <div class="notification-header">
+      <button class="close-btn" @click="emitCloseNotification">X</button>
+    </div>
+    <div class="notification-content">
+      <div v-if="isPresent && code !== undefined">
+        <p>Name: {{ scannedData.name }}</p>
+        <p>Code: {{ code }}</p>
+        <p>Segregation type: {{ scannedData.segregationType }}</p>
+      </div>
+      <div v-if="!isPresent && code !== undefined" class="notification-request">
+        <p>Code not found in database. Do you want to send request?</p>
+        <button @click="emitOpenRequest">Send request</button>
+      </div>
     </div>
   </div>
 </template>
@@ -10,13 +20,16 @@
 <script>
 export default {
   name: "ScannedNotification",
-  props: ["code"],
+  props: ["code", "isPresent", "scannedData"],
   data() {
     return {};
   },
   methods: {
-    emmitClose() {
-      this.$emit("close");
+    emitCloseNotification() {
+      this.$emit("closeNotification");
+    },
+    emitOpenRequest() {
+      this.$emit("openRequest");
     }
   }
 };
@@ -26,19 +39,34 @@ export default {
 .notification-container {
   display: flex;
   justify-content: center;
-  width: 100vw;
+  flex-flow: column;
+  width: 50vw;
+  padding: 0.1rem 0.5rem;
   position: fixed;
-  top: 1.5rem;
-  z-index: 15;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -30%);
+  z-index: 99;
+  background-color: #fff;
+  border-radius: 10px;
 }
 
-.notification {
+.notification-header {
   display: flex;
-  justify-content: space-between;
-  border-radius: 10px;
-  background-color: #fff;
-  width: 95%;
-  padding: 0.1rem 0.5rem;
+  justify-content: flex-end;
+  padding: 0.5rem;
+}
+
+.notification-request {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  padding-bottom: 1rem;
+}
+
+.notification-content {
+  display: flex;
+  justify-content: center;
 }
 
 .close-btn {
