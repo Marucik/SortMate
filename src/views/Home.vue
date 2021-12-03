@@ -15,6 +15,7 @@
       @closeRequest="hideRequest"
     />
     <CameraFeed @scan="propToNotify" @progress="updateProgress" />
+    <button class="linkButton" @click="goToLogin">Admin</button>
   </div>
 </template>
 
@@ -63,6 +64,9 @@ export default {
     },
     updateProgress(value) {
       this.scanProgress = value;
+    },
+    goToLogin() {
+      this.$router.push("/admin");
     }
   }
 };
@@ -76,6 +80,25 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.linkButton {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  padding: 0.1rem 0.5rem;
+  display: block;
+  outline: none;
+  background-color: #fff;
+  border: 5px black solid;
+  border-radius: 1rem;
+  opacity: 0.8;
+  transition: transform 0.1s ease-out;
+}
+
+.linkButton:hover {
+  cursor: pointer;
+  transform: scale(1.1);
 }
 
 #camera {

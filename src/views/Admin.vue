@@ -1,7 +1,9 @@
 <template>
   <div class="admin-wrapper">
     <div class="admin-header">
-      <h2 class="header-title">SortMate Admin</h2>
+      <h2 class="header-title" @click="goToHome">
+        Sort<span>Mate</span> Admin
+      </h2>
       <button class="logout-button" @click="logoutUser">Logout</button>
     </div>
     <div class="admin-main">
@@ -28,13 +30,20 @@ export default {
     };
   },
   async beforeMount() {
-    let response = await axios.get("/api/product-requests");
+    try {
+      let response = await axios.get("/api/product-requests", {
+        headers: { Authorization: `Bearer: ${localStorage.token}` }
+      });
 
-    this.requests = response.data;
+      this.requests = response.data;
+    } catch (error) {
+      this.logoutUser();
+      this.$toast.error("Token expired. Please login again.");
+    }
   },
   methods: {
     logoutUser() {
-      localStorage.authenticated = false;
+      localStorage.clear("token");
       this.$router.push("/login");
     },
     filterRequests(id) {
@@ -42,6 +51,9 @@ export default {
         this.requests = this.requests.filter(element => element.id !== id);
       }, 300);
       this.$toast.success("Request accepted!");
+    },
+    goToHome() {
+      this.$router.push("/");
     }
   }
 };
@@ -66,5 +78,13 @@ export default {
 
 .header-title {
   margin: 0;
+}
+
+.header-title {
+  cursor: pointer;
+}
+
+.header-title span {
+  color: purple;
 }
 </style>

@@ -30,7 +30,9 @@ export default {
   methods: {
     async acceptRequest() {
       try {
-        await axios.post(`/api/product-requests/${this.request.id}:accept`);
+        await axios.post(`/api/product-requests/${this.request.id}:accept`, {
+          headers: { Authorization: `Bearer: ${localStorage.token}` }
+        });
         this.accepted = true;
         this.$emit("requestAccepted", this.request.id);
       } catch {

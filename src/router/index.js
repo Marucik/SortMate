@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Admin from "../views/Admin.vue";
 import Login from "../views/Login.vue";
+import axios from "axios";
 
 Vue.use(VueRouter);
 
@@ -21,10 +22,14 @@ const routes = [
     path: "/admin",
     name: "Admin",
     component: Admin,
-    beforeEnter: (to, from, next) => {
-      if (localStorage.authenticated) {
+    beforeEnter: async (to, from, next) => {
+      try {
+        await axios.get("/api/users/me", {
+          headers: { Authorization: `Bearer: ${localStorage.token}` }
+        });
         next();
-      } else {
+      } catch (error) {
+        Vue.$toast.error("Please login first.");
         next("/login");
       }
     }

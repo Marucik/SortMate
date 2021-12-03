@@ -1,15 +1,18 @@
 <template>
-  <form v-on:submit.prevent="loginUser" class="form-container">
-    <div class="input-wrapper">
-      <label for="login">Login:</label>
-      <input type="text" name="login" v-model="login" />
-    </div>
-    <div class="input-wrapper">
-      <label for="password">Password:</label>
-      <input type="password" name="password" v-model="passowrd" />
-    </div>
-    <input type="submit" class="login-button" value="Login" />
-  </form>
+  <div class="form-container">
+    <form v-on:submit.prevent="loginUser" class="form-wrapper">
+      <h3 class="header" @click="goToHome">Sort<span>Mate</span></h3>
+      <div class="input-wrapper">
+        <label for="login">Login:</label>
+        <input type="text" name="login" v-model="login" />
+      </div>
+      <div class="input-wrapper">
+        <label for="password">Password:</label>
+        <input type="password" name="password" v-model="passowrd" />
+      </div>
+      <input type="submit" class="login-button" value="Login" />
+    </form>
+  </div>
 </template>
 
 <script>
@@ -27,17 +30,20 @@ export default {
   methods: {
     async loginUser() {
       try {
-        await axios.post("/api/user/login", {
+        const userToken = await axios.post("/api/users/login", {
           login: this.login,
           password: this.passowrd
         });
 
-        localStorage.authenticated = true;
+        localStorage.token = userToken.data;
 
         this.$router.push("/admin");
       } catch {
-        this.$toast.error("Bad login ro password.");
+        this.$toast.error("Bad login or password.");
       }
+    },
+    goToHome() {
+      this.$router.push("/");
     }
   }
 };
@@ -46,34 +52,46 @@ export default {
 <style scoped>
 .form-container {
   display: flex;
-  justify-content: center;
   flex-flow: column;
-  width: 50vw;
-  padding: 0.1rem 0.5rem;
-  position: fixed;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -30%);
-  z-index: 99;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+.header {
+  margin: 0;
+  margin-bottom: 1rem;
+}
+
+.header:hover {
+  cursor: pointer;
+}
+
+.header span {
+  color: purple;
+}
+
+.form-wrapper {
   background-color: #fff;
   border-radius: 10px;
   padding: 2rem;
 }
 
-.form-container > .input-wrapper {
+.input-wrapper {
   display: flex;
   flex-flow: column;
   justify-content: center;
-  width: 70%;
+  width: 100%;
   padding-bottom: 0.5rem;
 }
 
-.form-container > .input-wrapper:nth-last-of-type(1) {
+.input-wrapper:nth-last-of-type(1) {
   padding-bottom: 0;
 }
 
 .login-button {
   margin-top: 1rem;
-  width: 150px;
+  width: 100%;
 }
 </style>
