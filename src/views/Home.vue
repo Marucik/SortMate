@@ -14,8 +14,18 @@
       :code="code"
       @closeRequest="hideRequest"
     />
+    <CodeInputForm
+      v-if="displayCodeInput"
+      @scan="propToNotify"
+      @closeForm="hideForm"
+    />
     <CameraFeed @scan="propToNotify" @progress="updateProgress" />
-    <button class="linkButton" @click="goToLogin">Admin</button>
+    <div class="buttonWrapper">
+      <button class="homeButton" @click="goToLogin">Admin</button>
+      <button class="homeButton" @click="displayCodeInput = true">
+        Input code
+      </button>
+    </div>
   </div>
 </template>
 
@@ -24,17 +34,24 @@ import CameraFeed from "../components/CameraFeed.vue";
 import ScannedNotification from "../components/ScannedNotification.vue";
 import RequestForm from "../components/RequestForm.vue";
 import ProgressBar from "../components/ProgressBar.vue";
-// import axios from "axios";
+import CodeInputForm from "../components/CodeInputForm.vue";
 
 export default {
   name: "Home",
-  components: { CameraFeed, ScannedNotification, RequestForm, ProgressBar },
+  components: {
+    CameraFeed,
+    ScannedNotification,
+    RequestForm,
+    ProgressBar,
+    CodeInputForm
+  },
   data() {
     return {
       code: null,
       isPresent: false,
       displayNotification: false,
       displayRequestModal: false,
+      displayCodeInput: false,
       scanProgress: 0,
       scannedData: null
     };
@@ -42,11 +59,11 @@ export default {
   methods: {
     async propToNotify(value) {
       if (value.code === undefined) {
-        this.$toast.error("Code not found in front of camera. Try again :)");
+        this.$toast.error("Code not found in front of camera. Try again.");
       }
-
       this.code = value.code;
       this.isPresent = value.isPresent;
+      this.displayCodeInput = false;
       this.displayNotification = true;
       this.scanProgress = 0;
       this.scannedData = value.data;
@@ -54,6 +71,9 @@ export default {
     hideNotification() {
       this.displayNotification = false;
       this.isPresent = false;
+    },
+    hideForm() {
+      this.displayCodeInput = false;
     },
     displayForm() {
       this.hideNotification();
@@ -82,10 +102,13 @@ export default {
   align-items: center;
 }
 
-.linkButton {
+.buttonWrapper {
   position: fixed;
   top: 1rem;
   left: 1rem;
+}
+
+.homeButton {
   padding: 0.1rem 0.5rem;
   display: block;
   outline: none;
@@ -96,7 +119,7 @@ export default {
   transition: transform 0.1s ease-out;
 }
 
-.linkButton:hover {
+.homeButton:hover {
   cursor: pointer;
   transform: scale(1.1);
 }

@@ -34,7 +34,6 @@ export default {
       hints.set(DecodeHintType.POSSIBLE_FORMATS, formats);
       hints.set(DecodeHintType.TRY_HARDER, true);
 
-      console.groupCollapsed("Errors.");
       for (let index = 0; index < 10; index++) {
         const codeReader = new BrowserBarcodeReader(hints);
         const imgSrc = this.createImageFromVideo();
@@ -50,12 +49,10 @@ export default {
           break;
         }
       }
-      console.groupEnd();
+
       if (scanResult) {
         try {
           const result = await axios.get(`/api/products/${scanResult.text}`);
-
-          console.log(result, scanResult.text);
 
           this.$emit("scan", {
             isPresent: true,

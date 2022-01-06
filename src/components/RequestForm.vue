@@ -1,18 +1,18 @@
 <template>
-  <div class="request-container">
-    <div class="request-header">
-      <button class="close-btn" @click="emitCloseRequest">X</button>
+  <div class="requestContainer">
+    <div class="requestHeader">
+      <button class="closeBtn" @click="emitCloseRequest">X</button>
     </div>
-    <div class="request-form">
-      <div class="input-wrapper">
+    <div class="requestForm">
+      <div class="inputWrapper">
         <label for="productCode">Product code:</label>
         <input type="text" name="productCode" disabled :value="code" />
       </div>
-      <div class="input-wrapper">
+      <div class="inputWrapper">
         <label for="productName">Product name:</label>
         <input type="text" name="productName" v-model="form.productName" />
       </div>
-      <div class="input-wrapper">
+      <div class="inputWrapper">
         <label for="productDescription">Product description:</label>
         <input
           type="text"
@@ -20,7 +20,7 @@
           v-model="form.productDescription"
         />
       </div>
-      <div class="input-wrapper">
+      <div class="inputWrapper">
         <label for="segregationType">Segregation type:</label>
         <select
           type="text"
@@ -32,7 +32,7 @@
           <option value="paper">Paper</option>
         </select>
       </div>
-      <button class="request-submit" @click="sendRequest">Send request</button>
+      <button class="requestSubmit" @click="sendRequest">Send request</button>
     </div>
   </div>
 </template>
@@ -81,7 +81,7 @@ label {
   display: block;
 }
 
-.request-container {
+.requestContainer {
   display: flex;
   justify-content: center;
   flex-flow: column;
@@ -96,13 +96,13 @@ label {
   border-radius: 10px;
 }
 
-.request-header {
+.requestHeader {
   display: flex;
   justify-content: flex-end;
   padding: 0.5rem;
 }
 
-.request-form {
+.requestForm {
   display: flex;
   flex-flow: column;
   justify-content: center;
@@ -110,7 +110,7 @@ label {
   padding-bottom: 1rem;
 }
 
-.request-form > .input-wrapper {
+.requestForm > .inputWrapper {
   display: flex;
   flex-flow: column;
   justify-content: center;
@@ -118,16 +118,16 @@ label {
   padding-bottom: 0.5rem;
 }
 
-.request-form > .input-wrapper:nth-last-of-type(1) {
+.requestForm > .inputWrapper:nth-last-of-type(1) {
   padding-bottom: 0;
 }
 
-.request-submit {
+.requestSubmit {
   width: 70%;
   margin: 1rem 0;
 }
 
-.close-btn {
+.closeBtn {
   background-color: transparent;
   border: none;
   outline: none;
