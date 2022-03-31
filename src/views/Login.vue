@@ -1,18 +1,24 @@
 <template>
-  <div class="form-container">
-    <form v-on:submit.prevent="loginUser" class="form-wrapper">
-      <h3 class="header" @click="goToHome">Sort<span>Mate</span></h3>
-      <div class="input-wrapper">
-        <label for="login">Login:</label>
-        <input type="text" name="login" v-model="login" />
-      </div>
-      <div class="input-wrapper">
-        <label for="password">Password:</label>
-        <input type="password" name="password" v-model="passowrd" />
-      </div>
-      <input type="submit" class="login-button" value="Login" />
-    </form>
-  </div>
+  <v-dialog v-model="isVisible" persistent width="390">
+    <v-card>
+      <v-card-title class="text-h5" @click="goToHome">
+        Sort<span class="purple--text text--darken-2">Mate</span>
+      </v-card-title>
+      <v-card-text>
+        <v-form v-on:submit.prevent="loginUser" class="form-wrapper">
+          <v-text-field label="Login" v-model="login"></v-text-field>
+          <v-text-field
+            label="Password"
+            type="password"
+            v-model="password"
+          ></v-text-field>
+          <v-btn :loading="loading" color="primary" block type="submit"
+            >Login</v-btn
+          >
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -23,16 +29,19 @@ export default {
   data() {
     return {
       login: "",
-      passowrd: "",
-      error: undefined
+      password: "",
+      error: undefined,
+      loading: false,
+      isVisible: true
     };
   },
   methods: {
     async loginUser() {
+      this.loading = true;
       try {
         const userToken = await axios.post("/api/users/login", {
           login: this.login,
-          password: this.passowrd
+          password: this.password
         });
 
         localStorage.token = userToken.data;
@@ -40,6 +49,8 @@ export default {
         this.$router.push("/admin");
       } catch {
         this.$toast.error("Bad login or password.");
+      } finally {
+        this.loading = false;
       }
     },
     goToHome() {
@@ -57,41 +68,5 @@ export default {
   align-items: center;
   width: 100vw;
   height: 100vh;
-}
-
-.header {
-  margin: 0;
-  margin-bottom: 1rem;
-}
-
-.header:hover {
-  cursor: pointer;
-}
-
-.header span {
-  color: purple;
-}
-
-.form-wrapper {
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 2rem;
-}
-
-.input-wrapper {
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-  width: 100%;
-  padding-bottom: 0.5rem;
-}
-
-.input-wrapper:nth-last-of-type(1) {
-  padding-bottom: 0;
-}
-
-.login-button {
-  margin-top: 1rem;
-  width: 100%;
 }
 </style>

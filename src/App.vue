@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <router-view />
+    <v-app>
+      <router-view />
+    </v-app>
   </div>
 </template>
 <script>
@@ -20,9 +22,10 @@ html,
 body {
   margin: 0;
   padding: 0;
-  min-height: 100vh;
+  height: 100vh;
   width: 100vw;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
 }
 
 #app {
@@ -32,7 +35,7 @@ body {
  This pattern is downloaded from www.subtlepatterns.com 
  If you need more, that's where to get'em.
  ======================================================== */
-  min-height: 100vh;
+  height: 100%;
   width: 100%;
 }
 </style>

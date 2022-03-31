@@ -2,7 +2,7 @@
   <div class="home">
     <ProgressBar :progress="scanProgress" />
     <ScannedNotification
-      v-if="displayNotification && code !== undefined"
+      :isVisible="displayNotification && code !== undefined"
       :code="code"
       :isPresent="isPresent"
       :scannedData="scannedData"
@@ -10,21 +10,21 @@
       @openRequest="displayForm"
     />
     <RequestForm
-      v-if="displayRequestModal"
+      :isVisible="displayRequestModal"
       :code="code"
       @closeRequest="hideRequest"
     />
     <CodeInputForm
-      v-if="displayCodeInput"
+      :isVisible="displayCodeInput"
       @scan="propToNotify"
       @closeForm="hideForm"
     />
     <CameraFeed @scan="propToNotify" @progress="updateProgress" />
     <div class="buttonWrapper">
-      <button class="homeButton" @click="goToLogin">Admin</button>
-      <button class="homeButton" @click="displayCodeInput = true">
+      <v-btn color="primary" elevation="2" @click="goToLogin">Admin</v-btn>
+      <v-btn color="accent" elevation="2" @click="displayCodeInput = true">
         Input code
-      </button>
+      </v-btn>
     </div>
   </div>
 </template>
@@ -86,7 +86,9 @@ export default {
       this.scanProgress = value;
     },
     goToLogin() {
-      this.$router.push("/admin");
+      this.$router
+        .push("/admin")
+        .catch(() => this.$toast.error("Please login first."));
     }
   }
 };
@@ -103,25 +105,12 @@ export default {
 }
 
 .buttonWrapper {
+  display: flex;
+  gap: 1rem;
+  flex-flow: column;
   position: fixed;
   top: 1rem;
   left: 1rem;
-}
-
-.homeButton {
-  padding: 0.1rem 0.5rem;
-  display: block;
-  outline: none;
-  background-color: #fff;
-  border: 5px black solid;
-  border-radius: 1rem;
-  opacity: 0.8;
-  transition: transform 0.1s ease-out;
-}
-
-.homeButton:hover {
-  cursor: pointer;
-  transform: scale(1.1);
 }
 
 #camera {

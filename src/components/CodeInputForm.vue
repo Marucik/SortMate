@@ -1,18 +1,37 @@
 <template>
-  <div class="formWrapper">
-    <div class="header">
-      <button class="closeBtn" @click="closeForm">X</button>
-    </div>
-    <div class="form">
-      <div class="inputWrapper">
-        <label for="productCode">Product code:</label>
-        <input type="text" name="productCode" v-model="code" />
-      </div>
-      <button class="requestSubmit" @click="checkCode">
-        Check code
-      </button>
-    </div>
-  </div>
+  <v-dialog v-model="isVisible" persistent max-width="290">
+    <v-card>
+      <v-card-title class="text-h5">
+        Manually enter code
+      </v-card-title>
+      <v-card-text>
+        <v-form ref="codeForm">
+          <v-text-field
+            :rules="[rules.required]"
+            label="Code"
+            v-model="code"
+          ></v-text-field>
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-container style="padding: 0">
+          <v-row no-gutters>
+            <v-col>
+              <v-btn color="darken-1" text @click="closeForm">
+                Close
+              </v-btn>
+            </v-col>
+            <v-spacer />
+            <v-col>
+              <v-btn color="green darken-1" text @click="checkCode">
+                Check
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -20,14 +39,19 @@ import axios from "axios";
 
 export default {
   name: "CodeInputForm",
+  props: ["isVisible"],
   data() {
     return {
-      code: ""
+      code: "",
+      rules: {
+        required: value => !!value || "Required."
+      }
     };
   },
   methods: {
     closeForm() {
       this.$emit("closeForm");
+      this.$refs.codeForm.reset();
     },
     async checkCode() {
       if (this.code !== "")
@@ -39,78 +63,18 @@ export default {
             code: this.code,
             data: result.data
           });
-          return;
         } catch (error) {
           this.$emit("scan", {
             isPresent: false,
             code: this.code,
             data: null
           });
-          return;
+        } finally {
+          this.$refs.codeForm.reset();
         }
     }
   }
 };
 </script>
 
-<style>
-input,
-label {
-  display: block;
-}
-
-.formWrapper {
-  display: flex;
-  justify-content: center;
-  flex-flow: column;
-  width: 50vw;
-  padding: 0.1rem 0.5rem;
-  position: fixed;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -30%);
-  z-index: 99;
-  background-color: #fff;
-  border-radius: 10px;
-}
-
-.header {
-  display: flex;
-  justify-content: flex-end;
-  padding: 0.5rem;
-}
-
-.form {
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 1rem;
-}
-
-.inputWrapper {
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-  width: 70%;
-  padding-bottom: 0.5rem;
-}
-
-.inputWrapper:nth-last-of-type(1) {
-  padding-bottom: 0;
-}
-
-.requestSubmit {
-  width: 70%;
-  margin: 1rem 0;
-}
-
-.closeBtn {
-  background-color: transparent;
-  border: none;
-  outline: none;
-  font-size: 2rem;
-  padding: 0 1rem;
-  cursor: pointer;
-}
-</style>
+<style></style>

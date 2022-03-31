@@ -2,7 +2,7 @@
   <div class="cameraFeed">
     <video id="camera" ref="video"></video>
     <button class="scan" @click="emitClick"></button>
-    <button class="torch" @click="toggleTorch">
+    <button v-if="isTorchAvailable" class="torch" @click="toggleTorch">
       <img v-if="torchLit" src="@/assets/icons/zap.svg" alt="torchOn" />
       <img v-else src="@/assets/icons/zap-off.svg" alt="torchOff" />
     </button>
@@ -24,7 +24,8 @@ export default {
       videoWidth: 0,
       videoHeight: 0,
       mainStream: null,
-      torchLit: false
+      torchLit: false,
+      isTorchAvailable: false
     };
   },
   methods: {
@@ -90,7 +91,6 @@ export default {
     },
     toggleTorch() {
       const track = this.mainStream.getVideoTracks()[0];
-
       this.torchLit = !this.torchLit;
 
       track.applyConstraints({
@@ -102,8 +102,8 @@ export default {
     var constraints = {
       audio: false,
       video: {
-        width: 1280,
-        height: 720,
+        // width: 1280,
+        // height: 720,
         facingMode: "environment"
       }
     };
@@ -123,6 +123,11 @@ export default {
       };
     } catch (err) {
       console.log(err.name + ": " + err.message);
+    }
+    const capabilites = mediaStream.getVideoTracks()[0].getCapabilities();
+
+    if (capabilites.torch) {
+      this.isTorchAvailable = true;
     }
 
     this.mainStream = mediaStream;
