@@ -1,20 +1,4 @@
 <template>
-  <!-- <div class="notification-container">
-    <div class="notification-header">
-      <button class="close-btn" @click="emitCloseNotification">X</button>
-    </div>
-    <div class="notification-content">
-      <div v-if="isPresent && code !== undefined">
-        <p>Name: {{ scannedData.name }}</p>
-        <p>Code: {{ code }}</p>
-        <p>Segregation type: {{ scannedData.segregationType }}</p>
-      </div>
-      <div v-if="!isPresent && code !== undefined" class="notification-request">
-        <p>Code not found in database. Do you want to send request?</p>
-        <button @click="emitOpenRequest">Send request</button>
-      </div>
-    </div>
-  </div> -->
   <v-dialog v-model="isVisible" persistent max-width="290">
     <v-card :color="getColor">
       <v-card-title class="text-h5">
