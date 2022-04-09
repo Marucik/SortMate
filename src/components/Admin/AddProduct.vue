@@ -2,10 +2,16 @@
   <v-dialog v-model="isVisible" persistent max-width="290">
     <v-card>
       <v-card-title class="text-h5">
-        Create request
+        Create product
       </v-card-title>
       <v-card-text>
-        <v-form ref="requestForm">
+        <v-form ref="newProductForm">
+          <v-text-field
+            label="Code"
+            id="code"
+            autocomplete="off"
+            v-model="form.code"
+          ></v-text-field>
           <v-text-field
             label="Product name"
             id="name"
@@ -29,14 +35,14 @@
         <v-container style="padding: 0">
           <v-row no-gutters>
             <v-col>
-              <v-btn color="darken-1" text @click="emitCloseRequest">
+              <v-btn color="darken-1" text @click="closeModal">
                 Close
               </v-btn>
             </v-col>
             <v-spacer></v-spacer>
             <v-col>
-              <v-btn color="green darken-1" text @click="sendRequest">
-                Send request
+              <v-btn color="green darken-1" text @click="createProduct">
+                Create product
               </v-btn>
             </v-col>
           </v-row>
@@ -50,11 +56,12 @@
 import axios from "axios";
 
 export default {
-  name: "Request",
-  props: ["code", "isVisible"],
+  name: "AddProduct",
+  props: ["isVisible"],
   data() {
     return {
       form: {
+        code: "",
         productName: "",
         productDescription: "",
         segregationType: ""
@@ -63,88 +70,28 @@ export default {
     };
   },
   methods: {
-    emitCloseRequest() {
-      this.$emit("closeRequest");
-      this.$refs.requestForm.reset();
+    closeModal() {
+      this.$emit("closeModal");
+      this.$refs.newProductForm.reset();
     },
-    async sendRequest() {
+    async createProduct() {
       try {
-        await axios.post("/api/product-requests", {
+        await axios.post("/api/products", {
           name: this.form.productName,
-          code: this.code,
+          code: this.form.code,
           description: this.form.productDescription,
           segregationType: this.form.segregationType
         });
 
-        this.$toast.success("Request sent!");
+        this.$toast.success("Product created!");
       } catch (error) {
         this.$toast.error("Something went wrong.");
       } finally {
-        this.$emit("closeRequest");
-        this.$refs.requestForm.reset();
+        this.closeModal();
       }
     }
   }
 };
 </script>
 
-<style scoped>
-input,
-label {
-  display: block;
-}
-
-.requestContainer {
-  display: flex;
-  justify-content: center;
-  flex-flow: column;
-  width: 50vw;
-  padding: 0.1rem 0.5rem;
-  position: fixed;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -30%);
-  z-index: 99;
-  background-color: #fff;
-  border-radius: 10px;
-}
-
-.requestHeader {
-  display: flex;
-  justify-content: flex-end;
-  padding: 0.5rem;
-}
-
-.requestForm {
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 1rem;
-}
-
-.requestForm > .inputWrapper {
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-  width: 70%;
-  padding-bottom: 0.5rem;
-}
-
-.requestForm > .inputWrapper:nth-last-of-type(1) {
-  padding-bottom: 0;
-}
-
-.requestSubmit {
-  width: 70%;
-  margin: 1rem 0;
-}
-
-.closeBtn {
-  background-color: transparent;
-  border: none;
-  outline: none;
-  font-size: 2rem;
-  padding: 0 1rem;
-}
-</style>
+<style></style>

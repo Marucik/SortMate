@@ -2,7 +2,7 @@
   <div class="cameraFeed">
     <video id="camera" ref="video"></video>
     <button class="scan" @click="emitClick"></button>
-    <button class="torch" @click="toggleTorch">
+    <button v-if="isTorchAvailable" class="torch" @click="toggleTorch">
       <img v-if="torchLit" src="@/assets/icons/zap.svg" alt="torchOn" />
       <img v-else src="@/assets/icons/zap-off.svg" alt="torchOff" />
     </button>
@@ -24,7 +24,8 @@ export default {
       videoWidth: 0,
       videoHeight: 0,
       mainStream: null,
-      torchLit: false
+      torchLit: false,
+      isTorchAvailable: false
     };
   },
   methods: {
@@ -34,7 +35,6 @@ export default {
       hints.set(DecodeHintType.POSSIBLE_FORMATS, formats);
       hints.set(DecodeHintType.TRY_HARDER, true);
 
-      console.groupCollapsed("Errors.");
       for (let index = 0; index < 10; index++) {
         const codeReader = new BrowserBarcodeReader(hints);
         const imgSrc = this.createImageFromVideo();
@@ -50,13 +50,12 @@ export default {
           break;
         }
       }
-      console.groupEnd();
+
       if (scanResult) {
         try {
           const result = await axios.get(`/api/products/${scanResult.text}`);
 
-          console.log(result, scanResult.text);
-
+          // Kod znaleziony w bazie - wyświetlenie szczegółów
           this.$emit("scan", {
             isPresent: true,
             code: scanResult.text,
@@ -64,6 +63,7 @@ export default {
           });
           return;
         } catch (error) {
+          // Kod nie znaleziony w bazie - wyświetlenie formularza
           this.$emit("scan", {
             isPresent: false,
             code: scanResult.text,
@@ -72,6 +72,7 @@ export default {
           return;
         }
       } else {
+        // Kod nie znaleziony na żadnym ze zdjęć
         this.$emit("scan", {
           isPresent: false,
           code: undefined,
@@ -93,7 +94,6 @@ export default {
     },
     toggleTorch() {
       const track = this.mainStream.getVideoTracks()[0];
-
       this.torchLit = !this.torchLit;
 
       track.applyConstraints({
@@ -105,8 +105,8 @@ export default {
     var constraints = {
       audio: false,
       video: {
-        width: 1280,
-        height: 720,
+        width: 1920,
+        height: 1080,
         facingMode: "environment"
       }
     };
@@ -126,6 +126,11 @@ export default {
       };
     } catch (err) {
       console.log(err.name + ": " + err.message);
+    }
+    const capabilites = mediaStream.getVideoTracks()[0].getCapabilities();
+
+    if (capabilites.torch) {
+      this.isTorchAvailable = true;
     }
 
     this.mainStream = mediaStream;

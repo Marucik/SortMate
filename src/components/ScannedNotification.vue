@@ -1,28 +1,86 @@
 <template>
-  <div class="notification-container">
-    <div class="notification-header">
-      <button class="close-btn" @click="emitCloseNotification">X</button>
-    </div>
-    <div class="notification-content">
-      <div v-if="isPresent && code !== undefined">
-        <p>Name: {{ scannedData.name }}</p>
-        <p>Code: {{ code }}</p>
-        <p>Segregation type: {{ scannedData.segregationType }}</p>
-      </div>
-      <div v-if="!isPresent && code !== undefined" class="notification-request">
-        <p>Code not found in database. Do you want to send request?</p>
-        <button @click="emitOpenRequest">Send request</button>
-      </div>
-    </div>
-  </div>
+  <v-dialog v-model="isVisible" persistent max-width="290">
+    <v-card :color="getColor">
+      <v-card-title class="text-h5">
+        <span v-if="isPresent">
+          Code found
+        </span>
+        <span v-else>
+          Code not found
+        </span>
+      </v-card-title>
+      <v-card-text>
+        <div v-if="isPresent">
+          <v-list-item two-line>
+            <v-list-item-content>
+              <v-list-item-title>{{ scannedData.name }}</v-list-item-title>
+              <v-list-item-subtitle>Name</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item two-line>
+            <v-list-item-content>
+              <v-list-item-title>{{ code }}</v-list-item-title>
+              <v-list-item-subtitle>Code</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item two-line>
+            <v-list-item-content>
+              <v-list-item-title>{{
+                scannedData.segregationType
+              }}</v-list-item-title>
+              <v-list-item-subtitle>Segregation type</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </div>
+        <div v-else>
+          Do you want to send request?
+        </div>
+      </v-card-text>
+      <v-card-actions>
+        <v-container style="padding: 0">
+          <v-row no-gutters>
+            <v-col>
+              <v-btn color="darken-1" text @click="emitCloseNotification">
+                Close
+              </v-btn>
+            </v-col>
+            <v-spacer></v-spacer>
+            <v-col v-if="!isPresent">
+              <v-btn color="green darken-1" text @click="emitOpenRequest">
+                Send
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
 export default {
   name: "ScannedNotification",
-  props: ["code", "isPresent", "scannedData"],
+  props: ["code", "isPresent", "scannedData", "isVisible"],
   data() {
     return {};
+  },
+  computed: {
+    getColor() {
+      if (this.scannedData) {
+        switch (this.scannedData.segregationType) {
+          case "plastic":
+            return "yellow accent-2";
+          case "paper":
+            return "blue darken-2";
+          case "glass":
+            return "green darken-1";
+          default:
+            return "white";
+        }
+      } else {
+        return "white";
+      }
+    }
   },
   methods: {
     emitCloseNotification() {

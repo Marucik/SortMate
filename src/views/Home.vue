@@ -2,7 +2,7 @@
   <div class="home">
     <ProgressBar :progress="scanProgress" />
     <ScannedNotification
-      v-if="displayNotification && code !== undefined"
+      :isVisible="displayNotification && code !== undefined"
       :code="code"
       :isPresent="isPresent"
       :scannedData="scannedData"
@@ -10,11 +10,22 @@
       @openRequest="displayForm"
     />
     <RequestForm
-      v-if="displayRequestModal"
+      :isVisible="displayRequestModal"
       :code="code"
       @closeRequest="hideRequest"
     />
+    <CodeInputForm
+      :isVisible="displayCodeInput"
+      @scan="propToNotify"
+      @closeForm="hideForm"
+    />
     <CameraFeed @scan="propToNotify" @progress="updateProgress" />
+    <div class="buttonWrapper">
+      <v-btn color="primary" elevation="2" @click="goToLogin">Admin</v-btn>
+      <v-btn color="accent" elevation="2" @click="displayCodeInput = true">
+        Input code
+      </v-btn>
+    </div>
   </div>
 </template>
 
@@ -23,17 +34,24 @@ import CameraFeed from "../components/CameraFeed.vue";
 import ScannedNotification from "../components/ScannedNotification.vue";
 import RequestForm from "../components/RequestForm.vue";
 import ProgressBar from "../components/ProgressBar.vue";
-// import axios from "axios";
+import CodeInputForm from "../components/CodeInputForm.vue";
 
 export default {
   name: "Home",
-  components: { CameraFeed, ScannedNotification, RequestForm, ProgressBar },
+  components: {
+    CameraFeed,
+    ScannedNotification,
+    RequestForm,
+    ProgressBar,
+    CodeInputForm
+  },
   data() {
     return {
       code: null,
       isPresent: false,
       displayNotification: false,
       displayRequestModal: false,
+      displayCodeInput: false,
       scanProgress: 0,
       scannedData: null
     };
@@ -41,11 +59,11 @@ export default {
   methods: {
     async propToNotify(value) {
       if (value.code === undefined) {
-        this.$toast.error("Code not found in front of camera. Try again :)");
+        this.$toast.error("Code not found in front of camera. Try again.");
       }
-
       this.code = value.code;
       this.isPresent = value.isPresent;
+      this.displayCodeInput = false;
       this.displayNotification = true;
       this.scanProgress = 0;
       this.scannedData = value.data;
@@ -53,6 +71,9 @@ export default {
     hideNotification() {
       this.displayNotification = false;
       this.isPresent = false;
+    },
+    hideForm() {
+      this.displayCodeInput = false;
     },
     displayForm() {
       this.hideNotification();
@@ -63,6 +84,11 @@ export default {
     },
     updateProgress(value) {
       this.scanProgress = value;
+    },
+    goToLogin() {
+      this.$router
+        .push("/admin")
+        .catch(() => this.$toast.error("Please login first."));
     }
   }
 };
@@ -76,6 +102,15 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.buttonWrapper {
+  display: flex;
+  gap: 1rem;
+  flex-flow: column;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
 }
 
 #camera {
