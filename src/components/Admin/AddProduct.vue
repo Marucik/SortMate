@@ -2,7 +2,7 @@
   <v-dialog v-model="isVisible" persistent max-width="290">
     <v-card>
       <v-card-title class="text-h5">
-        Create request
+        Create product
       </v-card-title>
       <v-card-text>
         <v-form ref="newProductForm">

@@ -55,6 +55,7 @@ export default {
         try {
           const result = await axios.get(`/api/products/${scanResult.text}`);
 
+          // Kod znaleziony w bazie - wyświetlenie szczegółów
           this.$emit("scan", {
             isPresent: true,
             code: scanResult.text,
@@ -62,6 +63,7 @@ export default {
           });
           return;
         } catch (error) {
+          // Kod nie znaleziony w bazie - wyświetlenie formularza
           this.$emit("scan", {
             isPresent: false,
             code: scanResult.text,
@@ -70,6 +72,7 @@ export default {
           return;
         }
       } else {
+        // Kod nie znaleziony na żadnym ze zdjęć
         this.$emit("scan", {
           isPresent: false,
           code: undefined,
@@ -102,8 +105,8 @@ export default {
     var constraints = {
       audio: false,
       video: {
-        // width: 1280,
-        // height: 720,
+        width: 1920,
+        height: 1080,
         facingMode: "environment"
       }
     };

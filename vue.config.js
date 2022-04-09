@@ -6,7 +6,7 @@ module.exports = {
         changeOrigin: true
       }
     },
-    https: false
+    https: true
   },
 
   transpileDependencies: ["vuetify"]
